@@ -9,7 +9,6 @@
 import Joi from "@hapi/joi"
 import { JoiObject } from "@hapi/joi"
 import { splitLast } from "../util/util"
-import isGitUrl from "is-git-url"
 import { deline, dedent } from "../util/string"
 
 export type Primitive = string | number | boolean | null
@@ -124,17 +123,13 @@ export const joi: Joi.Root = Joi.extend({
         }),
       },
       validate(params: { options?: JoiGitUrlParams }, value: string, state, prefs) {
-        // Make sure it's a string
-        const baseSchema = Joi.string()
+        const baseSchema = Joi.string().uri({
+          scheme: ["git", "ssh", /https?/, /git\+https?/],
+        })
         const result = baseSchema.validate(value)
 
         if (result.error) {
           return result.error
-        }
-
-        if (!isGitUrl(value)) {
-          // tslint:disable-next-line:no-invalid-this
-          return this.createError("string.gitUrl", { v: value }, state, prefs)
         }
 
         if (params.options && params.options.requireHash === true) {

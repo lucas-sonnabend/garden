@@ -278,6 +278,13 @@ describe("joiRepositoryUrl", () => {
     expect(result.error).to.be.null
   })
 
+  it("should accept an git:// URL not ending in .git", () => {
+    const url = "git://github.com/garden-io/garden-example-remote-sources-web-services#my-tag"
+    const schema = joiRepositoryUrl()
+    const result = schema.validate(url)
+    expect(result.error).to.be.null
+  })
+
   it("should accept an HTTPS Git URL", () => {
     const url = "https://github.com/garden-io/garden-example-remote-sources-web-services.git#my-tag"
     const schema = joiRepositoryUrl()
