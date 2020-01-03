@@ -137,4 +137,12 @@ describe("commands.test", () => {
     const command = new TestCommand()
     expect(command.protected).to.be.true
   })
+
+  it("should skip disabled tests", async () => {
+    throw "TODO"
+  })
+
+  it("should skip tests from disabled modules", async () => {
+    throw "TODO"
+  })
 })

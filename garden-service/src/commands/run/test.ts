@@ -80,10 +80,9 @@ export class RunTestCommand extends Command<Args, Opts> {
     printHeader(headerLog, `Running test ${chalk.cyan(testName)} in module ${chalk.cyan(moduleName)}`, "runner")
 
     const actions = await garden.getActionRouter()
-    const version = await getTestVersion(garden, graph, module, testConfig)
 
     // Make sure all dependencies are ready and collect their outputs for the runtime context
-    const testTask = new TestTask({
+    const testTask = await TestTask.factory({
       force: true,
       forceBuild: opts["force-build"],
       garden,
@@ -91,12 +90,11 @@ export class RunTestCommand extends Command<Args, Opts> {
       log,
       module,
       testConfig,
-      version,
     })
     const dependencyResults = await garden.processTasks(await testTask.getDependencies())
 
     const interactive = opts.interactive
-    const dependencies = await graph.getDependencies("test", testConfig.name, false)
+    const dependencies = await graph.getDependencies({ nodeType: "test", name: testConfig.name, recursive: false })
 
     const serviceStatuses = getServiceStatuses(dependencyResults)
     const taskResults = getRunTaskResults(dependencyResults)
@@ -119,7 +117,7 @@ export class RunTestCommand extends Command<Args, Opts> {
       runtimeContext,
       silent: false,
       testConfig,
-      testVersion: version,
+      testVersion: testTask.version,
     })
 
     return { result }

@@ -69,6 +69,7 @@ describe("conftest-container provider", () => {
         type: "foo",
         allowPublish: false,
         build: { dependencies: [] },
+        disabled: false,
         outputs: {},
         path: containerModule.path,
         serviceConfigs: [],

@@ -132,6 +132,7 @@ describe("ActionRouter", () => {
               services: [{ name }],
               allowPublish: true,
               build: { dependencies: [] },
+              disabled: false,
             },
           ],
         })
@@ -266,6 +267,7 @@ describe("ActionRouter", () => {
           testConfig: {
             name: "test",
             dependencies: [],
+            disabled: false,
             timeout: 1234,
             spec: {},
           },
@@ -292,6 +294,7 @@ describe("ActionRouter", () => {
         const testConfig = {
           name: "test",
           dependencies: [],
+          disabled: false,
           timeout: 1234,
           spec: {
             artifacts: [
@@ -1744,6 +1747,7 @@ const testPlugin = createGardenPlugin({
           const serviceConfigs = params.moduleConfig.spec.services.map((spec) => ({
             name: spec.name,
             dependencies: spec.dependencies || [],
+            disabled: false,
             hotReloadable: false,
             spec,
           }))
@@ -1751,6 +1755,7 @@ const testPlugin = createGardenPlugin({
           const taskConfigs = (params.moduleConfig.spec.tasks || []).map((spec) => ({
             name: spec.name,
             dependencies: spec.dependencies || [],
+            disabled: false,
             spec,
           }))
 

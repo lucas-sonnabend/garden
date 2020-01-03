@@ -106,6 +106,7 @@ export async function configureTestModule({ moduleConfig }: ConfigureModuleParam
   moduleConfig.serviceConfigs = moduleConfig.spec.services.map((spec) => ({
     name: spec.name,
     dependencies: spec.dependencies,
+    disabled: spec.disabled,
     sourceModuleName: spec.sourceModuleName,
     spec,
   }))
@@ -113,6 +114,7 @@ export async function configureTestModule({ moduleConfig }: ConfigureModuleParam
   moduleConfig.taskConfigs = moduleConfig.spec.tasks.map((t) => ({
     name: t.name,
     dependencies: t.dependencies,
+    disabled: t.disabled,
     spec: t,
     timeout: t.timeout,
   }))
@@ -120,6 +122,7 @@ export async function configureTestModule({ moduleConfig }: ConfigureModuleParam
   moduleConfig.testConfigs = moduleConfig.spec.tests.map((t) => ({
     name: t.name,
     dependencies: t.dependencies,
+    disabled: t.disabled,
     spec: t,
     timeout: t.timeout,
   }))
@@ -267,6 +270,7 @@ const defaultModuleConfig: ModuleConfig = {
   path: "bla",
   allowPublish: false,
   build: { dependencies: [] },
+  disabled: false,
   outputs: {},
   spec: {
     services: [
@@ -280,6 +284,7 @@ const defaultModuleConfig: ModuleConfig = {
     {
       name: "test-service",
       dependencies: [],
+      disabled: false,
       hotReloadable: false,
       spec: {},
     },

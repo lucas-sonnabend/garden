@@ -19,6 +19,7 @@ export interface Service<M extends Module = Module, S extends Module = Module> {
   name: string
   module: M
   config: M["serviceConfigs"][0]
+  disabled: boolean
   sourceModule: S
   spec: M["serviceConfigs"][0]["spec"]
 }
@@ -45,6 +46,7 @@ export async function serviceFromConfig<M extends Module = Module>(
     name: config.name,
     module,
     config,
+    disabled: module.disabled || config.disabled,
     sourceModule,
     spec: config.spec,
   }

@@ -40,4 +40,12 @@ describe("RunServiceCommand", () => {
 
     expect(result).to.eql(expected)
   })
+
+  it("should throw if the service is disabled", async () => {
+    throw "TODO"
+  })
+
+  it("should throw if the service's module is disabled", async () => {
+    throw "TODO"
+  })
 })

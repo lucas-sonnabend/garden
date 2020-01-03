@@ -1,9 +1,11 @@
 import { resolve } from "path"
 import { expect } from "chai"
-import { makeTestGardenA, makeTestGarden, dataDir, expectError } from "../../helpers"
+import { makeTestGardenA, makeTestGarden, dataDir, expectError, TestGarden } from "../../helpers"
 import { getNames } from "../../../src/util/util"
 import { ConfigGraph, DependencyGraphNode } from "../../../src/config-graph"
 import { Garden } from "../../../src/garden"
+import { ModuleConfig } from "../../../src/config/module"
+import { DEFAULT_API_VERSION } from "../../../src/constants"
 
 describe("ConfigGraph", () => {
   let gardenA: Garden
@@ -60,6 +62,74 @@ describe("ConfigGraph", () => {
     expect(module.build.dependencies).to.eql([{ name: "module-a", copy: [] }])
   })
 
+  it("should ignore dependencies by services on disabled services", async () => {
+    const garden = await TestGarden.factory("/tmp")
+    const moduleTypes = garden.getModuleTypes()
+    const moduleConfigs: ModuleConfig[] = [
+      {
+        apiVersion: DEFAULT_API_VERSION,
+        allowPublish: false,
+        build: { dependencies: [] },
+        disabled: false,
+        name: "foo",
+        outputs: {},
+        path: "/tmp",
+        serviceConfigs: [
+          {
+            name: "disabled-service",
+            dependencies: [],
+            disabled: true,
+            hotReloadable: false,
+            spec: {},
+          },
+          {
+            name: "enabled-service",
+            dependencies: ["disabled-service"],
+            disabled: true,
+            hotReloadable: false,
+            spec: {},
+          },
+        ],
+        taskConfigs: [],
+        spec: {},
+        testConfigs: [],
+        type: "foo",
+      },
+    ]
+  })
+
+  it("should ignore dependencies by services on disabled tasks", async () => {
+    throw "TODO"
+  })
+
+  it("should ignore dependencies by services on services in disabled modules", async () => {
+    const garden = await makeTestGardenA()
+    const moduleConfigs: ModuleConfig[] = [
+      {
+        apiVersion: DEFAULT_API_VERSION,
+        allowPublish: false,
+        build: { dependencies: [] },
+        disabled: false,
+        name: "foo",
+        outputs: {},
+        path: "/tmp",
+        serviceConfigs: [],
+        taskConfigs: [],
+        spec: {},
+        testConfigs: [],
+        type: "exec",
+      },
+    ]
+  })
+
+  it("should ignore dependencies by tasks on disabled services", async () => {
+    throw "TODO"
+  })
+
+  it("should ignore dependencies by tests on disabled services", async () => {
+    throw "TODO"
+  })
+
   describe("getModules", () => {
     it("should scan and return all registered modules in the context", async () => {
       const modules = await graphA.getModules()
@@ -67,13 +137,25 @@ describe("ConfigGraph", () => {
     })
 
     it("should optionally return specified modules in the context", async () => {
-      const modules = await graphA.getModules(["module-b", "module-c"])
+      const modules = await graphA.getModules({ names: ["module-b", "module-c"] })
       expect(getNames(modules).sort()).to.eql(["module-b", "module-c"])
+    })
+
+    it("should omit disabled modules", async () => {
+      throw "TODO"
+    })
+
+    it("should optionally include disabled modules", async () => {
+      throw "TODO"
+    })
+
+    it("should throw if specifically requesting a disabled module", async () => {
+      throw "TODO"
     })
 
     it("should throw if named module is missing", async () => {
       try {
-        await graphA.getModules(["bla"])
+        await graphA.getModules({ names: ["bla"] })
       } catch (err) {
         expect(err.type).to.equal("parameter")
         return
@@ -91,14 +173,26 @@ describe("ConfigGraph", () => {
     })
 
     it("should optionally return specified services in the context", async () => {
-      const services = await graphA.getServices(["service-b", "service-c"])
+      const services = await graphA.getServices({ names: ["service-b", "service-c"] })
 
       expect(getNames(services).sort()).to.eql(["service-b", "service-c"])
     })
 
+    it("should omit disabled services", async () => {
+      throw "TODO"
+    })
+
+    it("should optionally include disabled services", async () => {
+      throw "TODO"
+    })
+
+    it("should throw if specifically requesting a disabled service", async () => {
+      throw "TODO"
+    })
+
     it("should throw if named service is missing", async () => {
       try {
-        await graphA.getServices(["bla"])
+        await graphA.getServices({ names: ["bla"] })
       } catch (err) {
         expect(err.type).to.equal("parameter")
         return
@@ -134,13 +228,25 @@ describe("ConfigGraph", () => {
     })
 
     it("should optionally return specified tasks in the context", async () => {
-      const tasks = await graphA.getTasks(["task-b", "task-c"])
+      const tasks = await graphA.getTasks({ names: ["task-b", "task-c"] })
       expect(getNames(tasks).sort()).to.eql(["task-b", "task-c"])
+    })
+
+    it("should omit disabled tasks", async () => {
+      throw "TODO"
+    })
+
+    it("should optionally include disabled tasks", async () => {
+      throw "TODO"
+    })
+
+    it("should throw if specifically requesting a disabled task", async () => {
+      throw "TODO"
     })
 
     it("should throw if named task is missing", async () => {
       try {
-        await graphA.getTasks(["bla"])
+        await graphA.getTasks({ names: ["bla"] })
       } catch (err) {
         expect(err.type).to.equal("parameter")
         return
@@ -166,6 +272,18 @@ describe("ConfigGraph", () => {
       }
 
       throw new Error("Expected error")
+    })
+  })
+
+  describe("getDependencies", () => {
+    it("should include disabled modules in build dependencies", async () => {
+      throw "TODO"
+    })
+  })
+
+  describe("resolveDependencyModules", () => {
+    it("should include disabled modules in build dependencies", async () => {
+      throw "TODO"
     })
   })
 

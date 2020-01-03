@@ -8,10 +8,7 @@
 
 import { flatten, uniq, cloneDeep, keyBy, some } from "lodash"
 import { getNames } from "../util/util"
-import { TestSpec } from "../config/test"
-import { ModuleSpec, ModuleConfig, moduleConfigSchema } from "../config/module"
-import { ServiceSpec } from "../config/service"
-import { TaskSpec } from "../config/task"
+import { ModuleConfig, moduleConfigSchema } from "../config/module"
 import { ModuleVersion, moduleVersionSchema } from "../vcs/vcs"
 import { pathToCacheContext } from "../cache"
 import { Garden } from "../garden"
@@ -30,12 +27,8 @@ export interface FileCopySpec {
 /**
  * The Module interface adds several internally managed keys to the ModuleConfig type.
  */
-export interface Module<
-  M extends ModuleSpec = any,
-  S extends ServiceSpec = any,
-  T extends TestSpec = any,
-  W extends TaskSpec = any
-> extends ModuleConfig<M, S, T, W> {
+export interface Module<M extends {} = any, S extends {} = any, T extends {} = any, W extends {} = any>
+  extends ModuleConfig<M, S, T, W> {
   buildPath: string
   buildMetadataPath: string
   configPath: string
