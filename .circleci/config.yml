@@ -85,7 +85,7 @@ commands:
           paths: [dashboard/node_modules]
           key: dashboard-v3-{{ checksum "dashboard/package-lock.json" }}
 
-  configure_kubectl_context:
+  install_kubectl:
     description: Configure the kubectl context so that we can access our remote cluster. Used for e2e testing.
     steps:
       - run:
@@ -93,9 +93,14 @@ commands:
           command: |
             mkdir -p $HOME/bin
             cd $HOME/bin
-            curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.14.0/bin/linux/amd64/kubectl
+            curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.17.0/bin/linux/amd64/kubectl
             chmod +x kubectl
             echo 'export PATH=$HOME/bin:$PATH' >> $BASH_ENV
+
+  configure_kubectl_context:
+    description: Configure the kubectl context so that we can access our remote cluster. Used for e2e testing.
+    steps:
+      - install_kubectl
       - run:
           name: Install gcloud
           command: |
@@ -365,7 +370,7 @@ jobs:
       GARDEN_LOGGER_TYPE: basic
     steps:
       - checkout
-      - configure_kubectl_context
+      - install_kubectl
       - run:
           name: Install system dependencies
           command: |
@@ -402,7 +407,8 @@ jobs:
             sudo chown -R circleci:circleci /home/circleci/.kube /home/circleci/.minikube /etc/kubernetes
       - run:
           name: Integ tests
-          command: cd garden-service && npm run integ -- -b
+          # Note: We skip tests requiring any secrets
+          command: cd garden-service && npm run integ -- -b --exclude "pulling from private"
       - run:
           name: Deploy demo-project
           command: sudo -E ./garden-service/bin/garden deploy --root examples/demo-project --logger-type basic
