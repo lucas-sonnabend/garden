@@ -407,8 +407,8 @@ jobs:
             sudo chown -R circleci:circleci /home/circleci/.kube /home/circleci/.minikube /etc/kubernetes
       - run:
           name: Integ tests
-          # Note: We skip tests requiring any secrets
-          command: cd garden-service && npm run integ -- -b --exclude "pulling from private"
+          # Note: We skip tests that only work for remote environments
+          command: cd garden-service && npm run integ-local -- -b
       - run:
           name: Deploy demo-project
           command: sudo -E ./garden-service/bin/garden deploy --root examples/demo-project --logger-type basic
